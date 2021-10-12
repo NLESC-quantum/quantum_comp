@@ -2,8 +2,12 @@
 # ~\~ begin <<README.md|scripts/plot-1.py>>[0]
 # ~\~ begin <<README.md|imports>>[0]
 import numpy as np
+from numpy import matrix
 from matplotlib import pyplot as plt
 from pathlib import Path
+
+def diag(x):
+    return np.asmatrix(np.diag(x))
 # ~\~ end
 # ~\~ begin <<README.md|setup>>[0]
 xpos = np.linspace(-2, 2, 5)[:,None]
@@ -25,13 +29,13 @@ g  = 1 + 0.3 * (np.random.normal(size=n_ant) \
 # ~\~ begin <<README.md|setup>>[5]
 freq = 150e6    # measurement frequency in MHz
 c = 2.99792e8   # speed of light in m/s
-A = np.exp(-(2 * np.pi * 1j * freq / c) * (xpos * l))
+A = np.matrix(np.exp(-(2 * np.pi * 1j * freq / c) * (xpos * l)))
 # ~\~ end
 # ~\~ begin <<README.md|setup>>[6]
-R = np.diag(g) @ A @ np.diag(sigma) @ A.T @ np.diag(g).T
+R = diag(g) @ A @ diag(sigma) @ A.H @ diag(g).H
 # ~\~ end
 # ~\~ begin <<README.md|calibration>>[0]
-Mmag = np.array(
+Mmag = np.matrix(
     [[1, 1, 0, 0, 0, 1, 0, 0],     # baseline type 1 (4 rows)
      [0, 1, 1, 0, 0, 1, 0, 0],
      [0, 0, 1, 1, 0, 1, 0, 0],
@@ -52,8 +56,8 @@ sel = [i + j * n_ant + j             # indexing row-major
                                      # and continuing, one less each time
 # ~\~ end
 # ~\~ begin <<README.md|calibration>>[2]
-theta = np.linalg.lstsq(Mmag, np.r_[np.log10(np.abs(R.flat[sel])), 0])
-gmag = 10**theta[0][:n_ant]
+theta = np.linalg.lstsq(Mmag, np.c_[np.log10(np.abs(R.flat[sel])), 0].T)
+gmag = 10**np.asarray(theta[0])[:n_ant]
 # ~\~ end
 
 gmag_true = abs(g) / abs(g.flat[0])

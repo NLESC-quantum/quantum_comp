@@ -3,8 +3,12 @@ Redundancy calibration is a method of calibrating a radio telescope that has mul
 
 ``` {.python #imports}
 import numpy as np
+from numpy import matrix
 from matplotlib import pyplot as plt
 from pathlib import Path
+
+def diag(x):
+    return np.asmatrix(np.diag(x))
 ```
 
 ## Simple demonstration of redundancy calibration for QC project
@@ -83,12 +87,12 @@ g  = 1 + 0.3 * (np.random.normal(size=n_ant) \
 ``` {.python #setup}
 freq = 150e6    # measurement frequency in MHz
 c = 2.99792e8   # speed of light in m/s
-A = np.exp(-(2 * np.pi * 1j * freq / c) * (xpos * l))
+A = np.matrix(np.exp(-(2 * np.pi * 1j * freq / c) * (xpos * l)))
 ```
 
 ### noise-free "measured" visibilities
 ``` {.python #setup}
-R = np.diag(g) @ A @ np.diag(sigma) @ A.T @ np.diag(g).T
+R = diag(g) @ A @ diag(sigma) @ A.H @ diag(g).H
 ```
 The original code transposed the last `diag(g)`, which is strictly speaking
 correct but a bit futile, let's keep it here too.
@@ -97,7 +101,7 @@ correct but a bit futile, let's keep it here too.
 
 ### measurement matrix for gain magnitudes
 ``` {.python #calibration}
-Mmag = np.array(
+Mmag = np.matrix(
     [[1, 1, 0, 0, 0, 1, 0, 0],     # baseline type 1 (4 rows)
      [0, 1, 1, 0, 0, 1, 0, 0],
      [0, 0, 1, 1, 0, 1, 0, 0],
@@ -127,8 +131,8 @@ These are the flat indices into the upper triangle, counting from (not including
 
 ### solve for gain magnitudes
 ``` {.python #calibration}
-theta = np.linalg.lstsq(Mmag, np.r_[np.log10(np.abs(R.flat[sel])), 0])
-gmag = 10**theta[0][:n_ant]
+theta = np.linalg.lstsq(Mmag, np.c_[np.log10(np.abs(R.flat[sel])), 0].T)
+gmag = 10**np.asarray(theta[0])[:n_ant]
 ```
 
 ``` {.python file=scripts/plot-1.py figure=fig/plot-1.svg}
@@ -146,6 +150,8 @@ ax.set_ylabel('gain magnitude')
 Path("fig").mkdir(exist_ok=True)
 fig.savefig("fig/plot-1.svg", bbox_inches='tight')
 ```
+
+![](fig/plot-1.svg)
 
 ``` {.matlab}
 % show comparison
