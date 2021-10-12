@@ -100,7 +100,7 @@ correct but a bit futile, let's keep it here too.
 ## Perform redundancy calibration of gain magnitudes
 
 ### measurement matrix for gain magnitudes
-``` {.python #calibration}
+``` {.python #gain-magnitudes}
 Mmag = np.matrix(
     [[1, 1, 0, 0, 0, 1, 0, 0],     # baseline type 1 (4 rows)
      [0, 1, 1, 0, 0, 1, 0, 0],
@@ -119,7 +119,7 @@ I can see how this encodes the information we need: the combination of each ante
 > the array covariance matrix to which redundancy is applicable. The
 > following selection matrix selects the appropriate elements from the
 > array covariance matrix
-``` {.python #calibration}
+``` {.python #gain-magnitudes}
 # sel = np.c_[6, 12, 18, 24, 11, 17, 23, 16, 22].T - 1
 sel = [i + j * n_ant + j             # indexing row-major
        for i in range(1, n_ant - 1)  # from first off-diagonal
@@ -130,16 +130,17 @@ sel = [i + j * n_ant + j             # indexing row-major
 These are the flat indices into the upper triangle, counting from (not including) the diagonal up. Each element in array `R` is the visibility between two antenas. This just happens to be the order in which the baselines appear in matrix `Mmag`. The largest baseline is not in there, since it is not redundant. We add a `-1` for 0 based indexing. In Python, these numbers actually give the lower triangle. The above lines compute the correct numbers in Python for any array size `n_ant`.
 
 ### solve for gain magnitudes
-``` {.python #calibration}
-theta = np.linalg.lstsq(Mmag, np.c_[np.log10(np.abs(R.flat[sel])), 0].T)
+``` {.python #gain-magnitudes}
+theta = np.linalg.lstsq(Mmag, np.c_[np.log10(np.abs(R.flat[sel])), 0].T, rcond=None)
 gmag = 10**np.asarray(theta[0])[:n_ant]
 ```
 
 ``` {.python file=scripts/plot-1.py figure=fig/plot-1.svg}
 <<imports>>
 <<setup>>
-<<calibration>>
+<<gain-magnitudes>>
 
+# Normalise true gain values to match constraint that the gain of the first
 gmag_true = abs(g) / abs(g.flat[0])
 fig, ax = plt.subplots(1, 1)
 antennae = np.arange(1, n_ant+1)
@@ -151,42 +152,55 @@ Path("fig").mkdir(exist_ok=True)
 fig.savefig("fig/plot-1.svg", bbox_inches='tight')
 ```
 
-![](fig/plot-1.svg)
+![Calibration of gain magnitudes](fig/plot-1.svg)
+
+## perform redundancy calibration of gain phases
+
+### measurement matrix for gain phases
+``` {.python #gain-phases}
+Mph = np.array([
+     [1, -1,  0,  0,  0,  1,  0,  0],   # baseline type 1 (4 rows)
+     [0,  1, -1,  0,  0,  1,  0,  0],  
+     [0,  0,  1, -1,  0,  1,  0,  0],  
+     [0,  0,  0,  1, -1,  1,  0,  0],  
+     [1,  0, -1,  0,  0,  0,  1,  0],   # baseline type 2 (3 rows)
+     [0,  1,  0, -1,  0,  0,  1,  0],  
+     [0,  0,  1,  0, -1,  0,  1,  0],  
+     [1,  0,  0, -1,  0,  0,  0,  1],   # baseline type 3 (1 row)
+     [0,  1,  0,  0, -1,  0,  0,  1],  
+     [0,  0,  1,  0,  0,  0,  0,  0],   # phase constraint on first element
+     np.r_[xpos.flat, 0, 0, 0]])             # phase gradient constraint
+```
+
+### solve for gain phases
+``` {.python #gain-phases}
+theta = np.linalg.lstsq(Mph, np.c_[np.angle(R.flat[sel]), 0, 0].T, rcond=None)
+gph = theta[0][:n_ant]
+```
+
+``` {.python file=scripts/plot-2.py figure=fig/plot-2.svg}
+<<imports>>
+<<setup>>
+<<gain-magnitudes>>
+<<gain-phases>>
+
+gph_true = np.c_[np.angle(g) - np.angle(g[2])]
+theta = np.linalg.lstsq(xpos, gph_true - gph, rcond=None)
+gph_true = gph_true - np.asarray(theta[0]) * xpos
+
+fig, ax = plt.subplots(1, 1)
+antennae = np.arange(1, n_ant+1)
+ax.plot(antennae, gph_true, 'b-', label='true gain')
+ax.plot(antennae, gph, 'ro', label='estimated gain')
+ax.set_xlabel('antenna #id')
+ax.set_ylabel('gain phases (rad)')
+Path("fig").mkdir(exist_ok=True)
+fig.savefig("fig/plot-2.svg", bbox_inches='tight')
+```
+
+![Calibration of gain phases](fig/plot-2.svg)
 
 ``` {.matlab}
-% show comparison
-figure
-% Normalise true gain values to match constraint that the gain of the first
-% element is unity
-gmag_true = abs(g) / abs(g(1));
-plot(1:5, gmag_true, 'b-', 1:5, gmag, 'ro');
-set(gca, 'FontSize', 16);
-xlabel('antenna index');
-ylabel('gain magnitude');
-legend('true gain', 'estimated gain');
-
-%% perform redundancy calibration of gain phases
-
-% measurement matrix for gain phases
-Mph = [ 1 -1  0  0  0  1  0  0; ... % baseline type 1 (4 rows)
-        0  1 -1  0  0  1  0  0; ...
-        0  0  1 -1  0  1  0  0; ...
-        0  0  0  1 -1  1  0  0; ...
-        1  0 -1  0  0  0  1  0; ... % baseline type 2 (3 rows)
-        0  1  0 -1  0  0  1  0; ...
-        0  0  1  0 -1  0  1  0; ...
-        1  0  0 -1  0  0  0  1; ... % baseline type 3 (1 row)
-        0  1  0  0 -1  0  0  1; ...
-        0  0  1  0  0  0  0  0; ... % phase constraint on first element
-       [xpos.' 0 0 0]];             % phase gradient constraint
-
-% solve for gain magnitudes
-theta = Mph \ [angle(R(sel)); 0; 0];
-gph = theta(1:Nant);
-
-% show comparison
-figure
-% apply constraint that central element is phase reference
 gph_true = angle(g) - angle(g(3));
 % find (arbitrary) phase gradient ambiguity
 theta = xpos \ (gph_true - gph);
