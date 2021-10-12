@@ -68,6 +68,7 @@ ax.plot(antennae, gmag_true, 'b-', label='true gain')
 ax.plot(antennae, gmag, 'ro', label='estimated gain')
 ax.set_xlabel('antenna #id')
 ax.set_ylabel('gain magnitude')
+ax.legend()
 Path("fig").mkdir(exist_ok=True)
 fig.savefig("fig/plot-1.svg", bbox_inches='tight')
 # ~\~ end

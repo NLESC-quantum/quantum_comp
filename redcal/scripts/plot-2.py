@@ -88,6 +88,7 @@ ax.plot(antennae, gph_true, 'b-', label='true gain')
 ax.plot(antennae, gph, 'ro', label='estimated gain')
 ax.set_xlabel('antenna #id')
 ax.set_ylabel('gain phases (rad)')
+ax.legend()
 Path("fig").mkdir(exist_ok=True)
 fig.savefig("fig/plot-2.svg", bbox_inches='tight')
 # ~\~ end
