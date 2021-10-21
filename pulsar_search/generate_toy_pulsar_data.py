@@ -74,6 +74,7 @@ if __name__ == '__main__':
               cmap='gray', extent=[0, ntime-1, 0, nchan-1])
     ax.set_xlabel('Time')
     ax.set_ylabel('Frequency')
+    fig.savefig("raw-data.svg")
 
     # timeseries
     fig, ax = plt.subplots()
@@ -83,6 +84,7 @@ if __name__ == '__main__':
         ax.plot(x, ts.astype(float) + i * scale, c='k')
     ax.set_xlabel('Time')
     ax.set_ylabel('Intensity')
+    fig.savefig("timeseries.svg")
 
     # FFT of timeseries at DM closest to real DM
     fig, ax = plt.subplots()
@@ -94,4 +96,4 @@ if __name__ == '__main__':
     ax.set_xlabel('Fourier frequency')
     ax.set_ylabel('Amplitude')
 
-    plt.show()
+    fig.savefig("fft.svg")

@@ -6,10 +6,11 @@ authors = ["Your Name <you@example.com>"]
 license = "Apache-2"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.11"
 qiskit = "^0.30.0"
 matplotlib = "^3.4.3"
 jupyterlab = "^3.1.13"
+numpy = "^1.21.3"
 
 [tool.poetry.dev-dependencies]
 
