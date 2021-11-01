@@ -10,7 +10,7 @@ def generate_fake_data(nchan, ntime, period, dm, noise_frac=.1):
        period (float): Pulsar period in units of time samples
        dm (float): DM in units of time samples across band
     """
-    assert (ntime / period) % 1 == 0, "for now need integer periods in ntime"
+    # assert (ntime / period) % 1 == 0, "for now need integer periods in ntime"
     data = np.zeros((nchan, ntime), dtype=np.uint8)
     # get indices where pulsar is "on" in reference frequency channel (= highest frequency = last channel)
     nperiod = int(ntime / period) + 1
