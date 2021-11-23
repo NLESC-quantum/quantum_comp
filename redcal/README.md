@@ -215,3 +215,12 @@ ylabel('gain phases (rad)');
 legend('true gain', 'estimated gain');
 ```
 
+## Complexity with HHL quantum algorithm
+
+In an ideal case, we can have for $N$ antennas, $N(N-1) / 2$ individual baselines and $N(N-1) / 4$ redundant baselines. Then we get a system of size $(N + N(N-1)/4) x N(N-1)/2$ with a sparsity of $s=3$. Solving this classically would scale as $O(N^2)$ whereas the quantum HHL algorithm can solve it in $O(\log(N))$. Since we need to read out $N$ elements of the solution, we get $O(N\log(N)))$, which is still better for large $N$.
+
+![Array configurations](fig/array-configurations.svg)
+
+In the case of a linear equidistant array, the number of redundant baselines is $N-2$, so that is not good enough.
+
+In the case of a square equidistant array, there are two diagonal baselines that are not redundant, among $2x(x-1)$ total baselines. Having $x^2$ antennas and $2x(x-1) - 2$ redundant baselines, both scaling as $x^2$, we still don't gain any efficiency from the quantum algorithm. Suppose however that we have two identical ideal arrays that individually have no redundant baselines (each of size $x$, each having $x(x-1)/2$ baselines). Then the total number of baselines is $x(x-1)/2 + 1$ (the added baseline from the distance between the two arrays) and the number of antennas is $2n$, then we're in buisiness.
