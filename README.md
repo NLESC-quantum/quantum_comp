@@ -19,3 +19,4 @@ Knowledge collection of the quantum computing exploration
 
 - [QisKit](https://qiskit.org/)
 - [Pennylane](https://pennylane.ai/)
+- [NANDgame](https://nandgame.com/). Great for learning about **classical** logic gates.
