@@ -98,7 +98,7 @@ if __name__ == '__main__':
     # data characteristics
     nchan = 128
     ntime = 2048
-    noise_level = .1
+    noise_level = .5
 
     # pulsar parameters
     psr_period = 500

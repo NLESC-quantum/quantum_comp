@@ -1,6 +1,15 @@
 import numpy as np
 from qiskit import QuantumCircuit
 
+def integrate_signal(data, n_count, shift, incr):
+    bits = []
+    ntime = data.shape[0]
+    for icol in range(ntime):
+        row_idx_start = shift
+        row_idx_end = shift+n_count*incr
+        d = data[row_idx_start:row_idx_end:incr,icol]
+        bits.append(BitsToIntAFast(d, invert_bits_order=True))
+    return bits
 
 def BitsToIntAFast(bits, invert_bits_order=True):
     n = len(bits)  # number of columns is needed, not bits.size
