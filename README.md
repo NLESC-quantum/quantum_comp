@@ -15,8 +15,10 @@ Knowledge collection of the quantum computing exploration
 ### Publications
 
 - Commodity compute and data-transport system design in modern large-scale distributed radio telescopes. [Chris Broekema's PhD thesis](https://www.astron.nl/~broekema/Thesis/PhD-Thesis.pdf)
-### Tools
 
+### Tools
 - [QisKit](https://qiskit.org/)
 - [Pennylane](https://pennylane.ai/)
 - [NANDgame](https://nandgame.com/). Great for learning about **classical** logic gates.
+
+### Tips
