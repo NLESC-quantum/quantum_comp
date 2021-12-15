@@ -7,3 +7,6 @@ Can we do quantum knn for pulsar classification ?
 
 We can also use other techniques that are used for pulsar detection: https://arxiv.org/pdf/2005.01208.pdf 
 Quantum Kernel methods : https://pennylane.ai/qml/demos/tutorial_kernels_module.html 
+
+We can use the HTRU2 data set https://archive.ics.uci.edu/ml/datasets/HTRU2 
+
