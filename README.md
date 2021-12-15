@@ -15,8 +15,21 @@ Knowledge collection of the quantum computing exploration
 ### Publications
 
 - Commodity compute and data-transport system design in modern large-scale distributed radio telescopes. [Chris Broekema's PhD thesis](https://www.astron.nl/~broekema/Thesis/PhD-Thesis.pdf)
-### Tools
 
+### Tools
 - [QisKit](https://qiskit.org/)
 - [Pennylane](https://pennylane.ai/)
 - [NANDgame](https://nandgame.com/). Great for learning about **classical** logic gates.
+
+### Tips
+In order to use bra-ket notation in Jupyter notebooks, include the snippet below in a markdown cell:
+
+```markdown
+$$
+\newcommand{\braket}[2]{\left\langle{#1}\middle|{#2}\right\rangle}
+\newcommand{\ket}[1]{\left|{#1}\right\rangle}
+\newcommand{\bra}[1]{\left\langle{#1}\right|}
+$$
+```
+
+it will render to whitespace, but it will allow to use the latex commands `\bra{q}`, `\ket{q}` and `\braket{q, p}`.
