@@ -73,10 +73,10 @@ class KNN:
 
     def test(self):
         """Test the model
-        """"
+        """
         predict = self.model.predict(self.test_dataset.features)
-        percent = np.sum(predict == self.test_dataset.labels)/self.test_dataset.npts
-        print(percent)
+        percent = 100*np.sum(predict == self.test_dataset.labels)/self.test_dataset.npts
+        print(" ==> Classification succesfull at %f percent" %percent)
 
 
 
