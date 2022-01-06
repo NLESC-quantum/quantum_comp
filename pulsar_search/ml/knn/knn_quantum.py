@@ -66,7 +66,7 @@ class QKNN:
         circuit_results = self.get_circuit_results(circuits)
         return self.model.instance._qalgo.get_all_contrasts(circuit_results)
 
-    def encode_data(self, dataset, nfeatures=4, n_train_points=8, n_test_points=8, balanced=True):
+    def encode_data(self, train_dataset, test_dataset):
         """Encode the data in the circuit
 
         Args:
@@ -74,24 +74,20 @@ class QKNN:
             fraction (list, optional): [description]. Defaults to [0.8,0.2].
         """
 
-
-        if balanced:
-            idx0 = np.argwhere(dataset.labels==0).flatten()
-            idx1 = np.argwhere(dataset.labels==1).flatten()
-            idx0 = idx0[:idx1.size]
-            idx = np.ravel(np.column_stack((idx0,idx1)))[:(n_train_points+n_test_points)]
-        else:
-            idx = np.arange(n_train_points+n_test_points)
+        # select the features
+        train_dataset.features = train_dataset.features
+        test_dataset.features = test_dataset.features
 
         # encode data
-        encoded_data = analog.encode(dataset.features[idx, :nfeatures])
+        encoded_train_data = analog.encode(train_dataset.features)
+        encoded_test_data = analog.encode(test_dataset.features)
 
         # now pick these indices from the data
-        self.train_data = encoded_data[:n_train_points]
-        self.train_labels = dataset.labels[idx[:n_train_points]]
+        self.train_data = encoded_train_data
+        self.train_labels = train_dataset.labels
 
-        self.test_data = encoded_data[n_train_points:(n_train_points+n_test_points), :nfeatures]
-        self.test_labels = dataset.labels[idx[n_train_points:(n_train_points+n_test_points)]]
+        self.test_data = encoded_test_data
+        self.test_labels = test_dataset.labels
 
     def fit(self):
         self.model.fit(self.train_data, self.train_labels)
