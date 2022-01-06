@@ -9,6 +9,12 @@ The dataset usually used is HTRU2 :
 
 * https://archive.ics.uci.edu/ml/datasets/HTRU2
 
+
+## Quantum Machine Learning
+
+An introduction to quantum machine learning
+https://arxiv.org/pdf/1409.3097.pdf
+
 ## K-nearest neighbors
 Knn have been used to classify pulsars :
 
@@ -30,4 +36,10 @@ Can we do quantum knn for pulsar classification ?
 
 
 ## Kernel methods
-Quantum Kernel methods : https://pennylane.ai/qml/demos/tutorial_kernels_module.html
+
+Supervised quantum machine learning models are kernel methods
+https://arxiv.org/pdf/2101.11020.pdf
+
+
+Quantum Kernel methods
+https://pennylane.ai/qml/demos/tutorial_kernels_module.html
