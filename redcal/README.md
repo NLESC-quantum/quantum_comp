@@ -226,8 +226,19 @@ According to the Qiskit documentation, the best you can do on a classical comput
 Quantum HHL runs in $O(\log(N)s^2\kappa^2/\epsilon), however this comes with a major caveat. The resulting vector exists only as a quantum state. The only thing we can get out is a projection of the solution vector onto a scalar. The conclusion is that we can be faster than the best classical algorithm, as long as we don't need the entire solution. How does this work out for the redundancy calibration?
 
 ## RedCal and HHL time-complexity
-First get $s$ out of the way: we have systems where $s = 3$, so as a constant factor it can drop out of our considerations. Let us have an array of $N$ antennae, $B = N(N-1)/2$ baselines and $R$ unique (non-redundant) baselines. The calibration improves in quality if we have redundant baselines with a large multiplicity $m$, such that $B \approx R m$. The linear systems we have to solve will be of size $(N + R) \times (B + 1)$ (the $+1$ is the last constraint row). We are only interested however in the $N$ terms for each of our antennae. Since we need to run HHL $N$ times, we scale as $O(N \log B) \sim O(N \log N)$.
-The best known classical algorithm needs $O(B) \sim O(N^2)$ to solve the same system.
+We are solving an over-determined system, which means that we need to first create a Hermitian matrix to run HHL on. We have a $n\timesm$ matrix where $n > m$. Then to solve the equation
+
+$$Ab = x,$$
+
+premultiply with $A^{\dagger}$ to get,
+
+$$A^{\dagger}Ab = A^{\dagger} x.$$
+
+We now have the guarantee that $H = A^{\dagger}A$ is Hermitian, and this system actually solves for $Ab = x$, such that $|Ab' - x|^2$ is minimized.
+
+For the following argument, let's set out some numbers. Let us have an array of $N$ antennae, $B = N(N-1)/2$ baselines and $R$ unique (non-redundant) baselines. The calibration improves in quality if we have redundant baselines with a large multiplicity $m$, such that $B \approx R m$. The linear systems we have to solve will be of size $B \times (N + R)$. This can be transformed into a Hermitian system of size $N + R$.
+
+We are only interested however in the $N$ terms for each of our antennae. Since we need to run HHL $N$ times, we scale as $O(N \log (N+R))$. If $N$ is suitably small compared to $R$, we may have a good speedup. The problem is however, that while matrix $M_{\rm mag}$ is sparse, $M_{\rm mag}^{\dagger}M_{\rm mag}$ is not.
 
 ## Number of q-bits
 <!-- 
