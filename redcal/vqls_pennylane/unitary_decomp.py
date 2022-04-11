@@ -45,10 +45,10 @@ def unitary_decomposition(X):
     return [cb,cb,cc,cc], [UB, VB, UC, VC]
 
 
-def unitary_recomposition(decomposed):
+def unitary_recomposition(coefs, matrices):
     """ Rebuilds the original matrix from the decomposed one """
-    recomp = decomposed[0][0] * decomposed[0][1]
-    for c,m in decomposed[1:]:
+    recomp = np.zeros_like(matrices[0])
+    for c, m in zip(coefs, matrices):
         recomp += c * m
     return recomp
 
