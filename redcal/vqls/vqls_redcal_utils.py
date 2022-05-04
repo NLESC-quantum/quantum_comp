@@ -161,8 +161,6 @@ def calculate_cost_function(parameters, *args):
 
                 backend = Aer.get_backend('aer_simulator')
 
-
-
                 hadammard_test(circ, [conj_gate_set[i], gate_set[j]],
                          [conj_gate_name[i], gate_name[j]],
                          [1, 2, 3], 0, parameters,
@@ -267,7 +265,7 @@ def sample_cost_function(parameters, *args):
 
     gate_set, gate_name, conj_gate_set, conj_gate_name, coefficient_set, ctrl_ub_mat_dagger = args
 
-    overall_sum_1 = 0.- + 0.0j
+    overall_sum_1 = 0.0 + 0.0j
 
     parameters = [parameters[0:3], parameters[3:6], parameters[6:9]]
 
@@ -319,16 +317,19 @@ def sample_cost_function(parameters, *args):
 
     for i in range(0, len(gate_set)):
         for j in range(0, len(gate_set)):
-            for imag in [False, True]:
 
-                multiply = coefficient_set[i]*np.conjugate(coefficient_set[j])
-                mult = 1
+            multiply = coefficient_set[i]*np.conjugate(coefficient_set[j])
+            mult = 1
+            gama_ij = 0.0 + 0.0j
 
-                for extra in range(0, 2):
+            for extra in range(0, 2):
+
+                term = 0.0 + 0.0j
+
+                for imag in [False, True]:
 
                     qctl = QuantumRegister(5)
                     qc = ClassicalRegister(1)
-
                     circ = QuantumCircuit(qctl, qc)
 
                     backend = Aer.get_backend('aer_simulator')
@@ -358,17 +359,24 @@ def sample_cost_function(parameters, *args):
                     else:
                         m_sum = 0
 
+                    p01 = 1.0 - 2.0*m_sum
+
+                    if imag:
+                        term += 1.0j * p01
+                    else:
+                        term += p01
+
                     mult = mult*(1-2*m_sum)
 
-                if imag:
-                    overall_sum_2 += multiply*mult*(-1.0j)
+                if extra == 0:
+                    gama_ij += term
                 else:
-                    overall_sum_2 += multiply*mult
+                    gama_ij *= np.conjugate(term)
 
-                overall_sum_2+=multiply*mult
+            overall_sum_2 += multiply*gama_ij
 
 
-    out = 1-(overall_sum_2/overall_sum_1)
+    out = 1.0-(overall_sum_2/overall_sum_1)
     print(out)
 
-    return out
+    return out.real
