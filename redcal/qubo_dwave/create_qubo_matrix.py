@@ -26,14 +26,14 @@ class BaseQbitEncoding(object):
         """
         variables = []
         for i in range(self.nqbit):
-            variables.append(Symbol(self.var_base_name + '_%d' %(i+1)))
+            variables.append(Symbol(self.var_base_name + '_%02d' %(i+1)))
         return variables
 
 class RealQbitEncoding(BaseQbitEncoding):
 
-    def __init__(self, nqbit, base_exponent, var_base_name):
+    def __init__(self, nqbit, var_base_name):
         super().__init__(nqbit, var_base_name)
-        self.base_exponent = base_exponent
+        self.base_exponent = 0
 
     def create_polynom(self):
         """
@@ -53,6 +53,35 @@ class RealQbitEncoding(BaseQbitEncoding):
         for i in range(self.nqbit//2):
             out += 2**(i-self.base_exponent) * data[i]
             out -= 2**(i-self.base_exponent) * data[self.nqbit//2+i]
+        return out
+
+class RealUnitQbitEncoding(BaseQbitEncoding):
+
+    def __init__(self, nqbit, var_base_name):
+        super().__init__(nqbit, var_base_name)
+        self.base_exponent = 0
+
+    def create_polynom(self):
+        """
+        Create the polynoms of the expansion
+
+        Returns:
+            sympy expression
+        """
+        out = 0.0
+        self.int_max = 0.0
+        for i in range(self.nqbit//2):
+            self.int_max += 2**(i-self.base_exponent)
+        for i in range(self.nqbit//2):
+            out += 2**(i-self.base_exponent)/self.int_max * self.variables[i]
+            out -= 2**(i-self.base_exponent)/self.int_max * self.variables[self.nqbit//2+i]
+        return out
+
+    def decode_polynom(self, data):
+        out = 0.0
+        for i in range(self.nqbit//2):
+            out += 2**(i-self.base_exponent)/self.int_max * data[i]
+            out -= 2**(i-self.base_exponent)/self.int_max * data[self.nqbit//2+i]
         return out
 
 class PositiveQbitEncoding(BaseQbitEncoding):
@@ -81,7 +110,7 @@ class PositiveQbitEncoding(BaseQbitEncoding):
 
 class SolutionVector(object):
 
-    def __init__(self, size, nqbit, base_name = 'x'):
+    def __init__(self, size, nqbit, encoding, base_name = 'x'):
         """Encode the solution vector in a list of RealEncoded
 
         Args:
@@ -93,6 +122,7 @@ class SolutionVector(object):
         self.size = size
         self.nqbit = nqbit
         self.base_name = base_name
+        self.encoding = encoding
         self.encoded_reals = self.create_encoding()
 
     def create_encoding(self):
@@ -105,7 +135,7 @@ class SolutionVector(object):
         encoded_reals = []
         for i in range(self.size):
             var_base_name = self.base_name + str(i+1)
-            encoded_reals.append(RealQbitEncoding(self.nqbit, 1, var_base_name))
+            encoded_reals.append(self.encoding(self.nqbit, var_base_name))
 
         return encoded_reals
 
@@ -188,12 +218,13 @@ if __name__ == "__main__":
 
     qubo_dict = create_qubo_matrix(A, b, x)
 
-    # sampler_auto = EmbeddingComposite(DWaveSampler(solver={'qpu': True}))
-    # sampler_neal = neal.SimulatedAnnealingSampler()
-    sampler_exact = ExactSolver()
+    # sampler = EmbeddingComposite(DWaveSampler(solver={'qpu': True}))
+    sampler = neal.SimulatedAnnealingSampler()
+    # sampler = ExactSolver()
 
-    sampleset = sampler_exact.sample_qubo(qubo_dict)
+    sampleset = sampler.sample_qubo(qubo_dict)
     lowest_sol = sampleset.lowest()
     sol_num = sol.decode_solution(lowest_sol.record[0][0])
+    print(np.linalg.solve(A,b))
     print(sol_num)
     print(lowest_sol)
