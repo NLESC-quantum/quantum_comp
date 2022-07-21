@@ -60,6 +60,7 @@ class RealUnitQbitEncoding(BaseQbitEncoding):
     def __init__(self, nqbit, var_base_name):
         super().__init__(nqbit, var_base_name)
         self.base_exponent = 0
+        assert((nqbit-1)%2==0)
 
     def create_polynom(self):
         """
@@ -69,19 +70,32 @@ class RealUnitQbitEncoding(BaseQbitEncoding):
             sympy expression
         """
         out = 0.0
-        self.int_max = 0.0
-        for i in range(self.nqbit//2):
+
+        i = 0
+        self.int_max = 2**(i-self.base_exponent)
+
+        for i in range(1, (self.nqbit-1)//2):
             self.int_max += 2**(i-self.base_exponent)
-        for i in range(self.nqbit//2):
+
+        
+        i = 0
+        out += 2**(i-self.base_exponent)/self.int_max * self.variables[i]
+
+        for i in range(1, (self.nqbit-1)//2+1):
+
             out += 2**(i-self.base_exponent)/self.int_max * self.variables[i]
-            out -= 2**(i-self.base_exponent)/self.int_max * self.variables[self.nqbit//2+i]
+            out -= 2**(i-self.base_exponent)/self.int_max * self.variables[(self.nqbit-1)//2+i]
         return out
 
     def decode_polynom(self, data):
         out = 0.0
-        for i in range(self.nqbit//2):
+
+        i=0
+        out += 2**(i-self.base_exponent)/self.int_max * data[i]
+
+        for i in range(1, (self.nqbit-1)//2+1):
             out += 2**(i-self.base_exponent)/self.int_max * data[i]
-            out -= 2**(i-self.base_exponent)/self.int_max * data[self.nqbit//2+i]
+            out -= 2**(i-self.base_exponent)/self.int_max * data[(self.nqbit-1)//2+i]
         return out
 
 class PositiveQbitEncoding(BaseQbitEncoding):
@@ -160,7 +174,7 @@ class SolutionVector(object):
         return np.array(sol)
 
 
-def create_qubo_matrix(Anp, bnp, x):
+def create_qubo_matrix(Anp, bnp, x, prec=None):
     """Create the QUBO dictionary requried by dwave solvers
        to solve the linear system
 
@@ -202,7 +216,19 @@ def create_qubo_matrix(Anp, bnp, x):
 
         out[key] += m[0]
 
-    return out
+    if prec is None:
+        return out
+
+    elif prec is not None:
+        nremoved = 0
+        out_cpy = dict()
+        for k, v in out.items():
+            if np.abs(v)>prec:
+                out_cpy[k] = v
+            else:
+                nremoved += 1
+        print('Removed %d elements' %nremoved)
+        return out_cpy
 
 if __name__ == "__main__":
 
