@@ -19,6 +19,7 @@ Knowledge collection of the quantum computing exploration
 ### Publications
 
 - Commodity compute and data-transport system design in modern large-scale distributed radio telescopes. [Chris Broekema's PhD thesis](https://www.astron.nl/~broekema/Thesis/PhD-Thesis.pdf)
+- [Nice review of some applications of QIP](https://arxiv.org/pdf/2203.01831.pdf)
 
 ### Tools
 - [QisKit](https://qiskit.org/)
