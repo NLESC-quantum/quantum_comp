@@ -31,9 +31,9 @@ In order to use bra-ket notation in Jupyter notebooks, include the snippet below
 
 ```markdown
 $$
-\newcommand{\braket}[2]{\left\langle{#1}\middle|{#2}\right\rangle}
-\newcommand{\ket}[1]{\left|{#1}\right\rangle}
-\newcommand{\bra}[1]{\left\langle{#1}\right|}
+\renewcommand{\braket}[2]{\left\langle{#1}\middle|{#2}\right\rangle}
+\renewcommand{\ket}[1]{\left|{#1}\right\rangle}
+\renewcommand{\bra}[1]{\left\langle{#1}\right|}
 $$
 ```
 
