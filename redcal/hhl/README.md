@@ -14,21 +14,19 @@ After our preliminary analysis, we found the HHL algorithm is not the most promi
 ---
 ### Details
 
+Some conclusions:
+
 The HHL algorithm presents some relevant limitations for us. Such as:
 
 - Its results are approximate for matrices larger than $2x2$.
 - It cannot discriminate the positive from the negative elements in the solution vector.
 
-But the most important, by far, is the following: 
+But the most important, by far, is the following:
 
-- It is quite hard to output the solution vector. The family of observables that the method accepts is limited. The most general one is `MatrixFunctional`, but don't get tricked by its promising name: it is not general, but a two-parameters tridiagonal matrix.
+- HHL, or at least its current `qiskit` implementation, only allows extracting either <x|x>, the arithmetic average of |x>'s coefficients or <x|B|x>. The last one looks promising, but unfortunately B is not a generic matrix: it has to be a Toeplitz tridiagonal matrix with only two degrees of freedom (see image below). Other subcases than those seem to be deliberately not implemented, probably because they don't offer any computational advantage compared to other methods. Furthermore, the whole method is known for not returning a complete solution.
 
-$$
-{\tt MatrixFunctional} (\vec x; a, b) = \bra{x} B(a, b) \ket{x} = \vec x^T B(a, b) \vec x 
-$$
+### A Toeplitz tridiagonal matrix
 
-where:
-
-![](./img/tridiagonal.png)
+![Toeplitz matrix](./img/tridiagonal.png)
 
 For even more details, take a look at [this notebook](./hhl_exploratory.ipynb).
