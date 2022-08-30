@@ -29,16 +29,6 @@ $$
 
 where:
 
-$$
-B(a,b) = 
-\begin{bmatrix}
-a & b & 0 & 0 & \dots \\
-b & a & b & 0 & \dots \\
-0 & b & a & b & \dots \\
-0 & 0 & b & a & \dots \\
-\vdots & \vdots & \vdots & \vdots & \ddots
-
-\end{bmatrix}
-$$
+![](./img/tridiagonal.png)
 
 For even more details, take a look at [this notebook](./hhl_exploratory.ipynb).
