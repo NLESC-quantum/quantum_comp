@@ -11,6 +11,8 @@ Knowledge collection of the quantum computing exploration
 - [Quantum computing since Democritus](https://www.scottaaronson.com/democritus/)
 - [Quantum Computation and Quantum Information. Isaac Chuang](https://www.bol.com/nl/nl/p/quantum-computation-and-quantum-information/1001004010977341/?s2a=)
 - [Modern quantum mechanics. J.J. Sakurai](https://www.bol.com/nl/nl/p/modern-quantum-mechanics/9300000013146000/). Not to be mistaken with Advanced quantum mechanics, by the same author.
+- [Probability theory. The logic of science. E.T. Jaynes](https://www.cambridge.org/core/books/probability-theory/9CA08E224FF30123304E6D8935CF1A99)
+- [Interferometry and Synthesis in Radio Astronomy. A.R. Thompson et al.](https://link.springer.com/book/10.1007/978-3-319-44431-4)
 
 ### Mathematics
 
