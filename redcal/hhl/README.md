@@ -2,6 +2,7 @@
 
 ## Contents
 
+- [An example showing the transpiling problems](./hhl_transpiling.ipynb), probably the elephant in the room right now.
 - [An exploratory notebook](./hhl_exploratory.ipynb), showing what we tried and how it worked.
 - [A minimal version](./hhl_minimal.ipynb) of the document above, going directly to our best solution. This document is less transparent, and it was written for sending a simple calculation to qIBM servers.
 
@@ -10,6 +11,7 @@
 ### TL;DR
 
 After our preliminary analysis, we found the HHL algorithm is not the most promising choice for our needs.
+Additionally, we found that equivalent circuits (in the sense of having identical operator matrices) can throw different results (perhaps due to noise?).
 
 ---
 ### Details
